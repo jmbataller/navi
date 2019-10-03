@@ -16,6 +16,7 @@ opts::eval() {
    local autoselect=true
    local best=false
    local query=""
+   local context=""
 
    case "${1:-}" in
       --version|version) entry_point="version"; shift ;;
@@ -39,6 +40,7 @@ opts::eval() {
          search) query="$arg"; wait_for=""; path="${path}:$(search::full_path "$query")"; ;;
          query|best) query="$arg"; wait_for="" ;;
          widget) SH="$arg"; wait_for="" ;;
+         context) context="$arg" ;;
       esac
 
       case $arg in
@@ -47,6 +49,7 @@ opts::eval() {
          --no-preview) preview=false ;;
          --path|--dir) wait_for="path" ;;
          --no-autoselect) autoselect=false ;;
+         --context) wait_for="context" ;;
       esac
 
       i=$((i+1))
@@ -59,7 +62,8 @@ opts::eval() {
       preview "$preview" \
       autoselect "$autoselect" \
       query "$query" \
-      best "$best")"
+      best "$best" \
+      context "$context")"
 
    export NAVI_PATH="$path"
 }
