@@ -1,0 +1,61 @@
+% kafka, kafkacat
+
+# install kafkacat in mac using brew
+brew install kafkacat
+
+# install kafkacat in debian systems
+apt-get install kafkacat
+
+# status of kafka broker / metadata listing
+kafkacat -b <broker> -L
+
+# metadata listing in json format
+kafkacat -b <broker> -L -J
+
+# produce message
+kafkacat -P -b <broker> -t <topic>
+
+# produce message with header
+kafkacat -P -b <broker> -t <topic>
+
+# produce message with snappy compression
+kafkacat -P -b <broker> -t <topic> -z snappy
+
+# read / consume messages
+kafkacat -b <broker> -t <topic> -C -f '\nKey (%K bytes): %k\t\nValue (%S bytes): %s\nTimestamp: %T\tPartition: %p\tOffset: %o\n--\n'
+
+# read X number of messages from a topic
+kafkacat -C -b <broker> -t <topic> -p 0 -o -<num_messages> -e
+
+# consume from all partitions of a topic
+kafkacat -C -b <broker> -t <topic>
+
+# consume messages and wrap them in a JSON envelope
+kafkacat -b <broker> -t <topic> -J
+
+# consume avro message with key and value encoded in avro
+kafkacat -b <broker> -t <topic> -s avro -r <schema-registry>
+
+# consume avro message with avro value
+kafkacat -b <broker> -t <topic> -s value=avro -r <schema-registry>
+
+# consume avro message with key encoded in avro
+kafkacat -b <broker> -t <topic> -s key=avro -r <schema-registry>
+
+# produce a tombstone (a "delete" for compacted topics) for a key by providing an empty (NULL) message value
+echo "<key>:" | kafkacat -b <broker> -t <topic> -Z -K: 
+
+# produce message with header
+kafkacat -P -b <broker> -t <topic> -H "<header_key>:<header_value>"
+
+# consume messages and its headers
+kafkacat -b <broker> -C -t <topic> -f 'Headers: %h: Message value: %s\n'
+
+# enable the idempotent producer with exactly-once and strict-ordering guarantees
+kafkacat -b <broker> -X enable.idempotence=true -P -t <topic>
+
+# query offset by Timestamp
+kafkacat -b <broker> -Q -t <topic>:<partition>:<epoch_timestamp>
+
+# consume messages between two timestamps
+kafkacat -b <broker> -C -t <topic> -o s@<epoch_start_timestamp> -o e@<epoch-end_timestamp>
